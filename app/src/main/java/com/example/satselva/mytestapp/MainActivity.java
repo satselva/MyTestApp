@@ -93,12 +93,18 @@ public class MainActivity extends AppCompatActivity {
         try {
             Log.d("CATEGORY", String.format("Making request to category list with URL [%s]", CATEGORY_URL));
             URL url = new URL(CATEGORY_URL);
-            final String randomId = UUID.randomUUID().toString();
-            final String networkResponse = String.format("{\"count\":1,\"category\":[{\"_id\":\"%s\",\"createdBy\":\"Admin\",\"name\":\"Burning Issues\",\"__v\":0,\"modifiedBy\":\"Ranjith\",\"iconUrl\":\"http://d27bygd3qv5fha.cloudfront.net/assets/category/icons/Burning-Issues1.jpg\",\"subCategories\":[],\"modifiedDate\":\"2016-01-17T19:19:46.712Z\",\"createdDate\":\"2016-01-11T12:39:31.683Z\"}]}", randomId);
-            //final AsyncTask<String, Authenticator.RequestorType, String> networkTaskResponse = new NetworkTask(NetworkTask.RequestType.GET).execute(CATEGORY_URL);
-            //Log.d("CATEGORY", String.format("Category list returned with the response %s", networkTaskResponse.get()));
-            Log.d("CATEGORY", String.format("Category list returned with the response %s", networkResponse));
-            JSONObject categoryJsonData = new JSONObject(networkResponse);
+
+            /** Uncomment the following two lines to avoid making network call*/
+            //final String randomId = UUID.randomUUID().toString();
+            //final String networkResponse = String.format("{\"count\":1,\"category\":[{\"_id\":\"%s\",\"createdBy\":\"Admin\",\"name\":\"Burning Issues\",\"__v\":0,\"modifiedBy\":\"Ranjith\",\"iconUrl\":\"http://d27bygd3qv5fha.cloudfront.net/assets/category/icons/Burning-Issues1.jpg\",\"subCategories\":[],\"modifiedDate\":\"2016-01-17T19:19:46.712Z\",\"createdDate\":\"2016-01-11T12:39:31.683Z\"}]}", randomId);
+            //Log.d("CATEGORY", String.format("Category list returned with the response %s", networkResponse));
+            //JSONObject categoryJsonData = new JSONObject(networkTaskResponse);
+
+            /** Comment the following 3 llines if you want to avoid network calls and uncomment the above lines. */
+            final AsyncTask<String, Authenticator.RequestorType, String> networkTaskResponse = new NetworkTask(NetworkTask.RequestType.GET).execute(CATEGORY_URL);
+            Log.d("CATEGORY", String.format("Category list returned with the response %s", networkTaskResponse.get()));
+            JSONObject categoryJsonData = new JSONObject(networkTaskResponse.get());
+
             JSONArray categoriesData = categoryJsonData.getJSONArray("category");
             for(int index=0; index < categoriesData.length(); index++) {
                 JSONObject categoryJson = categoriesData.getJSONObject(index);
@@ -114,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
             List<Category> categoriesResultFromDB = dbHelper.listAllCategories();
             Log.d("SQLRESULT", String.format("Found %d categories from DB", categoriesResultFromDB.size()));
 
-            Category categoryQueryResultWithId = dbHelper.getCategory(randomId);
+            Category categoryQueryResultWithId = dbHelper.getCategory(categoriesResultFromDB.get(0).getId());
             Log.d("SQLRESULT", String.format("Found %s categories from DB", categoryQueryResultWithId));
 
         } catch(JSONException e) {
