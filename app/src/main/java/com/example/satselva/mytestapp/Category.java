@@ -76,7 +76,7 @@ public class Category {
                 ", modifiedDate=" + modifiedDate +
                 ", createdDate=" + createdDate +
                 ", name='" + name + '\'' +
-                ", v='" + v + '\'' +
+                ", V='" + v + '\'' +
                 '}';
     }
 
